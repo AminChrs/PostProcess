@@ -37,3 +37,16 @@ pip install -r requirements.txt
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Citation
+
+In case that you have used codes in this repository, please consider citing our paper:
+
+```bibtex
+@article{charusaie2024unifying,
+  title={A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems},
+  author={Charusaie, Mohammad-Amin and Samadi, Samira},
+  journal={arXiv preprint arXiv:2407.12710},
+  year={2024}
+}
+```
