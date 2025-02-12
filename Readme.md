@@ -1,8 +1,10 @@
-<p align="center">
-<img src="logo.png" width="300" />
-</p>
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![GitHub version](https://img.shields.io/github/v/release/AminChrs/PostProcess)
+
+<p align="center">
+<img src="logo.png" width="400" />
+</p>
+
 \
 \
 This repository contains the experiments regarding the three plots mentioned in the paper. The experiments are conducted using the ACSIncome and COMPAS datasets. The code for the experiments can be found in the following Jupyter Notebook files:
