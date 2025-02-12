@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<p align="center">
 <img src="logo.png" width="300" />
-</div>
+</p>
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 [![Version](https://badge.fury.io/gh/tterb%2FHyde.svg)](https://badge.fury.io/gh/tterb%2FHyde)
 \
