@@ -5,7 +5,7 @@
 <img src="logo.png" width="400" />
 </p>
 
-This repository contains the experiments regarding the three plots mentioned in the paper. The experiments are conducted using the ACSIncome and COMPAS datasets. The code for the experiments can be found in the following Jupyter Notebook files:
+This repository contains the experiments of the paper "[A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems](https://arxiv.org/abs/2407.12710)" that was [published](https://neurips.cc/virtual/2024/poster/95484) in NeurIPS 2024. The experiments are conducted using the ACSIncome and COMPAS datasets. The code for the experiments can be found in the following Jupyter Notebook files:
 
 
 
