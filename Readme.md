@@ -52,10 +52,9 @@ This project is licensed under the [MIT License](LICENSE).
 In case that you have used codes in this repository, please consider citing our paper:
 
 ```bibtex
-@article{charusaie2024unifying,
+@inproceedings{charusaieunifying,
   title={A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems},
   author={Charusaie, Mohammad-Amin and Samadi, Samira},
-  journal={arXiv preprint arXiv:2407.12710},
-  year={2024}
+  booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems}
 }
 ```
