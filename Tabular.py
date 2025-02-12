@@ -967,38 +967,24 @@ def postprocess():
     max_loss = max_loss[idx_Z]
     max_loss_std = max_loss_std[idx_Z]
 # I plot the accuracy and the witness for the validation data
-# plt.errorbar(tolerance_space[idx_Z], max_loss[idx_Z],
-    # yerr=max_loss_std[idx_Z],
-    # label="Accuracy")
-    # print("Tolerance space:", tolerance_space)
-    # print("max_loss:", max_loss)
-    # print("max_loss_std:", max_loss_std)
     plot = False
     if plot:
         plt.fill_between(tols,
                         max_loss-max_loss_std,
                         max_loss+max_loss_std, alpha=0.5)
-    # plt.legend()
-    # plt.show()
         max_w_o = []
         max_w_std_o = []
         if isinstance(max_w[0], float):
             max_w_o = np.array(max_w)
             max_w_std_o = np.array(max_w_std)
-            # plt.errorbar(tolerance_space[idx_Z], np.abs(max_w[idx_Z]),
-            # yerr=max_w_std[idx_Z], label="Constraint")
             plt.fill_between(tols,
                             np.abs(max_w[idx_Z]-max_w_std[idx_Z]),
                             np.abs(max_w[idx_Z]+max_w_std[idx_Z]), alpha=0.5)
-            # plt.plot(tolerance_space[idx_Z], np.abs(max_w[idx_Z]),
-            # label="Constraint")
         else:
             for i in range(len(max_w[0])):
                 max_w_i = np.array([max_w[j][i] for j in range(len(max_w))])
                 max_w_std_i = np.array([max_w_std[j][i]
                                         for j in range(len(max_w_std))])
-                # plt.errorbar(tolerance_space[idx_Z], np.abs(max_w_i[idx_Z]),
-                # yerr=max_w_std_i[idx_Z], label="Constraint "+str(i))
                 # now I make a shadowed plot
                 max_w_o.append(max_w_i)
                 max_w_std_o.append(max_w_std_i)
@@ -1006,11 +992,6 @@ def postprocess():
                                 np.abs(max_w_i[idx_Z]-max_w_std_i[idx_Z]),
                                 np.abs(max_w_i[idx_Z]+max_w_std_i[idx_Z]),
                                 alpha=0.5)
-# plt.errorbar(tolerance_space, max_w, yerr=max_w_std, label="Witness")
-# plt.plot(tolerance_space, loss_baseline, label="Accuracy baseline")
-# plt.plot(tolerance_space, ws_baseline, label="Witness baseline")
-# plt.legend()
-# plt.show()
     return tols, max_loss, max_w[idx_Z], max_loss_std, max_w_std[idx_Z]
 
 
