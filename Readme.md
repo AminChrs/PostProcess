@@ -1,8 +1,8 @@
 <p align="center">
 <img src="logo.png" width="300" />
 </p>
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-[![Version](https://badge.fury.io/gh/tterb%2FHyde.svg)](https://badge.fury.io/gh/tterb%2FHyde)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![GitHub version](https://img.shields.io/github/v/release/AminChrs/PostProcess)
 \
 \
 This repository contains the experiments regarding the three plots mentioned in the paper. The experiments are conducted using the ACSIncome and COMPAS datasets. The code for the experiments can be found in the following Jupyter Notebook files:
