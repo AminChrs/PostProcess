@@ -1,104 +1,192 @@
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from helpers.utils import argmax_constrained
 
 idx_y_emb = [[0, 2], [1, 3]]
 idx_M_emb = [[0, 1], [2, 3]]
 
 
-def process_score_labels(M_train, M_test, M_val, y_train, y_test, y_val,
-                         val=True, constraint='eo'):
-    # Here I make labels L_train, L_test, L_val
-    n_s = 1 + 1
-    L_train = 2 * M_train + y_train
-    L_test = 2 * M_test + y_test
-    # print("L_test:", L_test)
-    if val:
-        L_val = 2 * M_val + y_val
-        return L_train, L_test, L_val, n_s
-    else:
-        return L_train, L_test, n_s
+class embedding:
 
+    def __init__(self, type_emb, net_type):
+        self.type_emb = type_emb
+        self.net_type = net_type
+        self.init_estimator()
 
-def witness(rf_out_witness, A,
-            ps,
-            type_witness="eo"):
-    # rf_out = rf_out_witness
-    pa0, pa1, pa0y0, pa0y1, pa1y0, pa1y1 = ps
-    if type_witness == "dp":
+    def init_estimator(self):
+        if self.net_type == "rf" and self.type_emb != "loss":
+            self.net = RandomForestClassifier(n_jobs=-2)
+        elif self.net_type == "rf" and self.type_emb == "loss":
+            self.nets = []
+            self.nets.append(RandomForestClassifier(n_jobs=-2))
+            self.nets.append(RandomForestClassifier(n_jobs=-2))
+
+    def fit(self, **kwargs):
+        if self.type_emb == "dp":
+            return self.fit_dp(**kwargs)
+        elif self.type_emb == "eo":
+            return self.fit_eo(**kwargs)
+        elif self.type_emb == "loss":
+            return self.fit_loss(**kwargs)
+
+    def calculate(self, Dataset, data_type, calulation_type):
+        if calulation_type == "estimate":
+            if self.type_emb != "loss":
+                net_out = self.net.predict_proba(Dataset.X[data_type])
+            elif self.type_emb == "loss":
+                net_out = []
+                net_out.append(
+                    self.nets[0].predict_proba(Dataset.X[data_type]))
+                net_out.append(
+                    self.nets[1].predict_proba(Dataset.X[data_type]))
+        elif calulation_type == "true":
+            if self.type_emb == 'loss':
+                net_out = []
+                net_out[0] = np.zeros([len(Dataset.y[data_type]), 2])
+                net_out[0][np.arange(len(Dataset.y[data_type])),
+                           Dataset.y[data_type]] = 1
+                net_out[1] = np.zeros([len(Dataset.MY[data_type]), 2])
+                net_out[1][np.arange(len(Dataset.MY[data_type])),
+                           Dataset.MY[data_type]] = 1
+            else:
+                net_out = np.zeros([len(Dataset.L[data_type]), 4])
+                net_out[np.arange(len(Dataset.L[data_type])),
+                        Dataset.L[data_type]] = 1
+
+        if self.type_emb == "loss":
+            ret = self.calculate_embedding_from_scores(
+                net_out, Dataset.A[data_type], Dataset.ps)
+        else:
+            ret = self.calculate_embedding_from_scores(net_out)
+        return ret
+
+    def fit_dp(self, Dataset):
+        self.net.fit(Dataset.X['train'], Dataset.L['train'])
+
+    def fit_eo(self, Dataset):
+        self.net.fit(Dataset.X['train'], Dataset.L['train'])
+
+    def fit_loss(self, Dataset):
+        self.nets[0].fit(Dataset.X['train'], Dataset.y['train'])
+        self.nets[1].fit(Dataset.X['train'], Dataset.MY['train'])
+
+    def calculate_embedding_from_scores(self, **kwargs):
+        if self.type_emb == "dp":
+            return self.calculate_embedding_dp(**kwargs)
+        elif self.type_emb == "eo":
+            return self.calculate_embedding_eo(**kwargs)
+        elif self.type_emb == "loss":
+            return self.calculate_embedding_loss(**kwargs)
+
+    def calculate_embedding_dp(self, net_out, A, ps):
+
         t = []
         for i in range(len(A)):
             if A[i] == 0:
-                t.append(1/pa0)
+                t.append(1/ps.pa0)
             elif A[i] != 0:
-                t.append(-1/pa1)
+                t.append(-1/ps.pa1)
         t = np.array(t)
         idxm1 = idx_M_emb[1]
-        pm1x = np.sum(rf_out_witness[:, idxm1], axis=1)
-        ret = np.zeros([rf_out_witness.shape[0], 3])
+        pm1x = np.sum(net_out[:, idxm1], axis=1)
+        ret = np.zeros([net_out.shape[0], 3])
 
-        ret[:, 0] = 0.0*rf_out_witness.shape[0]
+        ret[:, 0] = 0.0*net_out.shape[0]
         ret[:, 1] = t
         ret[:, 2] = t*pm1x
+        return ret
 
-    elif type_witness == "eo":
+    def calculate_embedding_eo(self, net_out, A, ps):
         t0 = []
         for i in range(len(A)):
             if A[i] == 1:
-                t0.append(1/pa1y0)
+                t0.append(1/ps.pa1y0)
             else:
-                t0.append(-1/pa0y0)
+                t0.append(-1/ps.pa0y0)
         t1 = []
         for i in range(len(A)):
             if A[i] == 0:
-                t1.append(1/pa0y1)
+                t1.append(1/ps.pa0y1)
             elif A[i] != 0:
-                t1.append(-1/pa1y1)
+                t1.append(-1/ps.pa1y1)
         idxm1y1 = np.intersect1d(idx_M_emb[1], idx_y_emb[1])
         idxy1 = idx_y_emb[1]
         idxy0 = idx_y_emb[0]
         idxm1y0 = np.intersect1d(idx_M_emb[1], idx_y_emb[0])
-        py1x = np.sum(rf_out_witness[:, idxy1], axis=1)
-        py0x = np.sum(rf_out_witness[:, idxy0], axis=1)
-        pm1y1x = rf_out_witness[:, idxm1y1] 
-        pm1y0x = rf_out_witness[:, idxm1y0]
-        ret = np.zeros([rf_out_witness.shape[0], 2, 3])
-        ret[:, 0, 0] = 0.0*rf_out_witness.shape[0]
+        py1x = np.sum(net_out[:, idxy1], axis=1)
+        py0x = np.sum(net_out[:, idxy0], axis=1)
+        pm1y1x = net_out[:, idxm1y1] 
+        pm1y0x = net_out[:, idxm1y0]
+        ret = np.zeros([net_out.shape[0], 2, 3])
+        ret[:, 0, 0] = 0.0*net_out.shape[0]
         ret[:, 0, 1] = t1*py1x
         ret[:, 0, 2] = t1*pm1y1x[:, 0]
-        ret[:, 1, 0] = 0.0*rf_out_witness.shape[0]
+        ret[:, 1, 0] = 0.0*net_out.shape[0]
         ret[:, 1, 1] = t0*py0x
         ret[:, 1, 2] = t0*pm1y0x[:, 0]
-        # In this case, the witness function is as
-        # 0, py1a1x/py1a1-py1a0x/py1a0, pm1y1a1x/py1a1-pm1y1a0x/py1a0
-    return ret
+        return ret
+
+    def calculate_embedding_loss(self, nets_out):
+        pmy = nets_out[1][:, 1]
+        ret = np.zeros([len(nets_out[0]), 3])
+        ret[:, :-1] = nets_out[0]
+        ret[:, -1] = pmy
+        return ret
 
 
-def witness_loss(rf_out, rf_out_my):
-    pmy = rf_out_my[:, 1]
-    ret = np.zeros([len(rf_out), 3])
-    ret[:, :-1] = rf_out
-    ret[:, -1] = pmy
-    return ret
+class classifier:
 
+    def __init__(self, embs):
+        self.embs = embs
 
-def estimate_witnesses(witness, witness_loss, X, A, ps, rfs):
-    rf_clf, rf_my, rf_clf_witness = rfs
-    rf_out = rf_clf.predict_proba(X)
-    rf_out_witness = rf_clf_witness.predict_proba(X)
-    rf_out_my = rf_my.predict_proba(X)
-    loss = witness_loss(rf_out, rf_out_my)
-    w = witness(rf_out_witness, A, ps)
-    return loss, w
+    def calculate_embs(self, Dataset, data_type, calculation):
+        embs_out = []
+        for emb in self.embs:
+            embs_out.append(emb.calculate(Dataset, data_type, calculation))
+        self.embs_out = embs_out
 
+    def predict(self, k, Dataset, data_type, calculation):
+        self.calculate_embs(Dataset, data_type, calculation)
+        if isinstance(k, float):
+            k = [k]
+            self.embs_out[1] = np.tile(self.embs_out[1], (len(k), 1))
+        lagrang = self.embs_out[0]
+        for i in range(len(k)):
+            lagrang -= k[i]*self.embs_out[1][:, i]
 
-def true_witness(witness, witness_loss, L, A, ps, MY, y, n_s):
+        argmax = np.argmax(lagrang, axis=1)
+        self.predictions = argmax
+        return argmax
 
-    rf_real = np.zeros([len(y), 2])
-    rf_real[np.arange(len(y)), y] = 1
-    # turn rf_real_witness into a one-hot vector
-    rf_real_witness = np.zeros([len(L), 4])
-    rf_real_witness[np.arange(len(L)), L] = 1
-    rf_real_my = np.zeros([len(MY), 2])
-    rf_real_my[np.arange(len(MY)), MY] = 1
-    loss_real = witness_loss(rf_real, rf_real_my)
-    w_real = witness(rf_real_witness, A, ps)
-    return loss_real, w_real
+    def mean_emb_predict(self, Dataset, data_type, calculation, mean=True):
+        self.calculate_embs(Dataset, data_type, calculation)
+        mean_out = []
+        for emb_out in self.embs_out:
+            idxs = np.arange(len(emb_out))
+            if len(emb_out.shape) == 2:
+                pred_val = emb_out[idxs, self.predictions]
+            elif len(emb_out.shape) == 3:
+                pred_val = emb_out[idxs, :, self.predictions]
+            if mean:
+                pred_val = np.average(pred_val, axis=0)
+            pred_val = np.array(pred_val)
+            mean_out.append(pred_val)
+        return mean_out
+
+    def optimal_combination(self,
+                            Dataset, coefficient_space, tolerance_space,):
+
+        for k in coefficient_space:
+            self.predict(k, Dataset, 'val', 'estimate')
+            mean_out = self.mean_emb_predict(Dataset, 'val', 'true')
+        coeffs = []
+        for tol in tolerance_space:
+            # find the minimum loss for all the ones with ws < tol
+            max_index = argmax_constrained(mean_out[0],
+                                           mean_out[1], np.abs(tol))
+            if max_index is None:
+                coeffs.append(None)
+                continue
+            coeff_max = coefficient_space[max_index]
+            coeffs.append(coeff_max)
+        return coeffs

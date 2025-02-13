@@ -10,8 +10,29 @@ data_dir = Path("~").expanduser() / "data" / "folktables" / "train=0.6_test=\
 
 
 class dataset:
-    def __init__():
-        pass
+    def __init__(self):
+        self.process_score_labels()
+        self.calculate_ps()
+
+    def process_score_labels(self, val=True):
+
+        # n_s = 1 + 1
+        if val:
+            all_sets = ['train', 'test', 'validation']
+        else:
+            all_sets = ['train', 'test']
+        for data_type in all_sets:
+            self.L[data_type] = 2 * self.M[data_type] + self.y[data_type]
+
+    def calculate_ps(self):
+        length = self.s['train'].shape[0]
+        pa0 = np.sum(self.s['train'] == 0)/length
+        pa1 = np.sum(self.s['train'] != 0)/length
+        pa1y1 = np.sum((self.s['train'] != 0)*(self.y['train'] == 1))/length
+        pa1y0 = np.sum((self.s['train'] != 0)*(self.y['train'] == 0))/length
+        pa0y1 = np.sum((self.s['train'] == 0)*(self.y['train'] == 1))/length
+        pa0y0 = np.sum((self.s['train'] == 0)*(self.y['train'] == 0))/length
+        self.ps = (pa0, pa1, pa0y0, pa0y1, pa1y0, pa1y1)
 
 
 ACS_CATEGORICAL_COLS = {
@@ -101,98 +122,49 @@ def load_ACS_data(dir_path: str, task_name: str,
     return data
 
 
-def human_sim(y_train, y_test, y_val, s_train, s_test, s_val, val=True):
+def human_sim(y, s):
     """Simulate human error in the labels.
     
     Parameters
     ----------
-    y_train : np.ndarray
-        Training labels.
-    y_test : np.ndarray
-        Testing labels.
-    y_val : np.ndarray
-        Validation labels.
-    s_train : np.ndarray
-        Training sensitive attributes.
-    s_test : np.ndarray
-        Testing sensitive attributes.
-    s_val : np.ndarray
-        Validation sensitive attributes.
-    val : bool, optional
-        Whether to simulate human error in the validation set, by default True.
+    y : np.ndarray
+        The true labels.
     """
-    M_test = np.zeros(len(y_test))
-    M_val = np.zeros(len(y_val))
-
-    def noisy(y, s):
-        m = np.zeros(len(y))
-        for i in range(len(y)):
-            if s[i] == 0:
-                random = np.random.uniform(0, 1)
-                if random < 0.85:
-                    m[i] = y[i]
-                else:
-                    m[i] = 1-y[i]
+    m = np.zeros(len(y))
+    for i in range(len(y)):
+        if s[i] == 0:
+            random = np.random.uniform(0, 1)
+            if random < 0.85:
+                m[i] = y[i]
             else:
-                random = np.random.uniform(0, 1)
-                if random < 0.6:
-                    m[i] = y[i]
-                else:
-                    m[i] = 1-y[i]
-        m = m.astype(int)
-        return m
-    M_test = noisy(y_test, s_test)
-    M_train = noisy(y_train, s_train)
-    if val:
-        M_val = noisy(y_val, s_val)
-    else:
-        print("No validation data.")
-    return M_train, M_test, M_val
+                m[i] = 1-y[i]
+        else:
+            random = np.random.uniform(0, 1)
+            if random < 0.6:
+                m[i] = y[i]
+            else:
+                m[i] = 1-y[i]
+    m = m.astype(int)
+    return m
 
 
-def generate():
+def generate_ACS():
+    Dataset = dataset()
     #  Load and pre-process data
     all_data = load_ACS_data(
         dir_path=data_dir, task_name=ACS_TASK,
     )
     # Unpack into features, label, and group
-    X_train, y_train, s_train = all_data["train"]
-    X_test, y_test, s_test = all_data["test"]
+    all_sets = []
     if "validation" in all_data:
-        X_val, y_val, s_val = all_data["validation"]
+        all_sets = ['train', 'test', 'validation']
     else:
-        print("No validation data.")
-
-    actual_prevalence = np.sum(y_train) / len(y_train)
-    print(f"Global prevalence: {actual_prevalence:.1%}")
-    if "validation" in all_data:
-        val_data = True
-    M_train, M_test, M_val = human_sim(y_train, y_test, y_val, s_train, s_test,
-                                       s_val,
-                                       val=val_data)
-
-    # find the new labels that are M==Y
-    MY_train = np.where(y_train == M_train, 1, 0)
-    MY_test = np.where(y_test == M_test, 1, 0)
-    if "validation" in all_data:
-        MY_val = np.where(y_val == M_val, 1, 0)
-        # print("MY_val:", MY_val)
-    else:
-        print("No validation data.")
-    Dataset = dataset()
-    Dataset.X_train = X_train
-    Dataset.y_train = y_train
-    Dataset.s_train = s_train
-    Dataset.X_test = X_test
-    Dataset.y_test = y_test
-    Dataset.s_test = s_test
-    Dataset.X_val = X_val
-    Dataset.y_val = y_val
-    Dataset.s_val = s_val
-    Dataset.M_train = M_train
-    Dataset.M_test = M_test
-    Dataset.M_val = M_val
-    Dataset.MY_train = MY_train
-    Dataset.MY_test = MY_test
-    Dataset.MY_val = MY_val
+        all_sets = ['train', 'test']
+    for data_type in all_sets:
+        Dataset.X[data_type], Dataset.y[data_type], Dataset.s[data_type] =\
+              all_data[data_type]
+        Dataset.M[data_type] =\
+            human_sim(Dataset.y[data_type], Dataset.s[data_type])
+        Dataset.MY[data_type] =\
+            np.where(Dataset.y[data_type] == Dataset.M[data_type], 1, 0)
     return Dataset

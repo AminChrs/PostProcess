@@ -19,3 +19,13 @@ def bootstrap_func(function, *args, n_iter=10):
         avg.append(np.average(res_dim_i, axis=0))
         std.append(np.std(res_dim_i, axis=0))
     return avg, std
+
+
+def bootstrap_vec(vec, n_iter=10):
+    results = []
+    for i in range(n_iter):
+        choice = np.random.choice(len(vec), len(vec))
+        results.append(vec[choice])
+    avg = np.average(results, axis=0)
+    std = np.std(results, axis=0)
+    return avg, std

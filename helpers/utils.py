@@ -69,3 +69,21 @@ class ExpertDatasetTensor(Dataset):
 
     def __len__(self):
         return len(self.targets)
+
+def argmax_constrained(array1, array2, tol):
+    if len(array2.shape) == 1:
+        indices = np.where(np.abs(array2) < tol)
+    else:
+        idxs = []
+        for i in range(array2.shape[1]):
+            idxs.append(np.where(np.abs(array2[:, i]) < tol))
+        indices = np.intersect1d(*idxs)
+    if isinstance(indices, tuple):
+        indices = indices[0]
+        if len(indices) == 0:
+            return None
+    else:
+        if indices.shape[0] == 0:
+            return None
+    max_index = np.argmax(array1[indices])
+    max_index = indices[max_index]
