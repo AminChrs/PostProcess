@@ -7,15 +7,6 @@
 
 This repository contains the experiments of the paper "[A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems](https://arxiv.org/abs/2407.12710)" that was [published](https://neurips.cc/virtual/2024/poster/95484) in NeurIPS 2024. This paper introduces a post-processing method for solving a variety of multi-objective learning problems, including but not limited to learn-to-defer problem and fair multi-class classification problem. During this method, first an embedding function related to each objective is trained, and then an optimal classifier via linear combination of the embedding functions is obtained using validation data. This method presents an alternative paradigm compared to Lagrangian-based methods such as primal-dual methods.
 
-The experiments are conducted using the ACSIncome and COMPAS datasets. The code for the experiments can be found in the following Jupyter Notebook files:
-
-
-
-- ACS.ipynb
-- COMPAS.ipynb
-
-Please refer to these notebooks for the detailed implementation and analysis of the plots.
-
 ## Installation
 
 For easy installation of the package using ```pip```, you can use the following command in your terminal:
