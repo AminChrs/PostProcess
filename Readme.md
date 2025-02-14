@@ -11,7 +11,7 @@ This repository contains the experiments of the paper "[A Unifying Post-Processi
 
 For easy installation of the package using ```pip```, you can use the following command in your terminal:
 ```bash
-pip install postprocessing
+  pip install postprocessing
 ```
 
 ## Quickstart Example
