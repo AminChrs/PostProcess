@@ -1,6 +1,5 @@
 import numpy as np
-from helpers.bootstrap import bootstrap_vec
-from helpers.embedding import embedding, classifier
+from helpers.embedding import Embedding, Classifier
 from datasetsdefer.acs_dataset import generate_ACS
 
 
@@ -19,31 +18,18 @@ def main():
                            coeff_space[1].flatten()))
 
     # Training
-    emb_loss = embedding("loss", "rf")
-    emb_eo = embedding("eo", "rf")
+    emb_loss = Embedding("loss", "rf")
+    emb_eo = Embedding("eo", "rf")
     emb_loss.fit(Dataset)
     emb_eo.fit(Dataset)
 
     # Validation
     embs = [emb_loss, emb_eo]
-    classifier_emb = classifier(embs)
-    coeffs = classifier_emb.optimal_combination(embs, Dataset,
+    classifier_emb = Classifier(embs)
+    coeffs = classifier_emb.optimal_combination(Dataset,
                                                 coeff_space,
                                                 tolerance_space,)
 
     # Test
-    means = []
-    stds = []
-    for threshold in coeffs:
-        if threshold is None:
-            means.append(None)
-            stds.append(None)
-            continue
-        else:
-            classifier_emb.predict(threshold, Dataset, 'test', 'estimate')
-            out_test = classifier_emb.mean_emb_predict(Dataset, 'test', 'true',
-                                                       mean=False)
-            out_test_mean, out_test_std = bootstrap_vec(out_test)
-            means.append(out_test_mean)
-            stds.append(out_test_std)
+    means, stds = classifier_emb.test(coeffs, Dataset)
     return tolerance_space, means, stds

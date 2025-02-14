@@ -2,37 +2,14 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import folktables
+from .basedataset import dataset
+
+
 ACS_TASK = "ACSIncome"
 SEED = 42
 EPS = 1e-6
-data_dir = Path("~").expanduser() / "data" / "folktables" / "train=0.6_test=\
-    0.2_validation=0.2_max-groups=4"
-
-
-class dataset:
-    def __init__(self):
-        self.process_score_labels()
-        self.calculate_ps()
-
-    def process_score_labels(self, val=True):
-
-        # n_s = 1 + 1
-        if val:
-            all_sets = ['train', 'test', 'validation']
-        else:
-            all_sets = ['train', 'test']
-        for data_type in all_sets:
-            self.L[data_type] = 2 * self.M[data_type] + self.y[data_type]
-
-    def calculate_ps(self):
-        length = self.s['train'].shape[0]
-        pa0 = np.sum(self.s['train'] == 0)/length
-        pa1 = np.sum(self.s['train'] != 0)/length
-        pa1y1 = np.sum((self.s['train'] != 0)*(self.y['train'] == 1))/length
-        pa1y0 = np.sum((self.s['train'] != 0)*(self.y['train'] == 0))/length
-        pa0y1 = np.sum((self.s['train'] == 0)*(self.y['train'] == 1))/length
-        pa0y0 = np.sum((self.s['train'] == 0)*(self.y['train'] == 0))/length
-        self.ps = (pa0, pa1, pa0y0, pa0y1, pa1y0, pa1y1)
+data_dir = Path("~").expanduser()\
+    / "data" / "folktables" / "train=0.6_test=0.2_validation=0.2_max-groups=4"
 
 
 ACS_CATEGORICAL_COLS = {
@@ -167,4 +144,5 @@ def generate_ACS():
             human_sim(Dataset.y[data_type], Dataset.s[data_type])
         Dataset.MY[data_type] =\
             np.where(Dataset.y[data_type] == Dataset.M[data_type], 1, 0)
+    Dataset.finalize()
     return Dataset

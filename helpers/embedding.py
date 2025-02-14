@@ -1,12 +1,14 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from helpers.utils import argmax_constrained
+from helpers.bootstrap import bootstrap_vec
+
 
 idx_y_emb = [[0, 2], [1, 3]]
 idx_M_emb = [[0, 1], [2, 3]]
 
 
-class embedding:
+class Embedding:
 
     def __init__(self, type_emb, net_type):
         self.type_emb = type_emb
@@ -42,10 +44,10 @@ class embedding:
         elif calulation_type == "true":
             if self.type_emb == 'loss':
                 net_out = []
-                net_out[0] = np.zeros([len(Dataset.y[data_type]), 2])
+                net_out.append(np.zeros([len(Dataset.y[data_type]), 2]))
                 net_out[0][np.arange(len(Dataset.y[data_type])),
                            Dataset.y[data_type]] = 1
-                net_out[1] = np.zeros([len(Dataset.MY[data_type]), 2])
+                net_out.append(np.zeros([len(Dataset.MY[data_type]), 2]))
                 net_out[1][np.arange(len(Dataset.MY[data_type])),
                            Dataset.MY[data_type]] = 1
             else:
@@ -53,11 +55,13 @@ class embedding:
                 net_out[np.arange(len(Dataset.L[data_type])),
                         Dataset.L[data_type]] = 1
 
-        if self.type_emb == "loss":
+        if self.type_emb != "loss":
             ret = self.calculate_embedding_from_scores(
-                net_out, Dataset.A[data_type], Dataset.ps)
+                net_out=net_out,
+                A=Dataset.s[data_type],
+                ps=Dataset.ps)
         else:
-            ret = self.calculate_embedding_from_scores(net_out)
+            ret = self.calculate_embedding_from_scores(nets_out=net_out)
         return ret
 
     def fit_dp(self, Dataset):
@@ -134,7 +138,7 @@ class embedding:
         return ret
 
 
-class classifier:
+class Classifier:
 
     def __init__(self, embs):
         self.embs = embs
@@ -177,8 +181,8 @@ class classifier:
                             Dataset, coefficient_space, tolerance_space,):
 
         for k in coefficient_space:
-            self.predict(k, Dataset, 'val', 'estimate')
-            mean_out = self.mean_emb_predict(Dataset, 'val', 'true')
+            self.predict(k, Dataset, 'validation', 'estimate')
+            mean_out = self.mean_emb_predict(Dataset, 'validation', 'true')
         coeffs = []
         for tol in tolerance_space:
             # find the minimum loss for all the ones with ws < tol
@@ -190,3 +194,21 @@ class classifier:
             coeff_max = coefficient_space[max_index]
             coeffs.append(coeff_max)
         return coeffs
+
+    def test(self, coeffs, Dataset):
+
+        means = []
+        stds = []
+        for threshold in coeffs:
+            if threshold is None:
+                means.append(None)
+                stds.append(None)
+                continue
+            else:
+                self.predict(threshold, Dataset, 'test', 'estimate')
+                out_test = self.mean_emb_predict(Dataset, 'test', 'true',
+                                                 mean=False)
+                out_test_mean, out_test_std = bootstrap_vec(out_test)
+                means.append(out_test_mean)
+                stds.append(out_test_std)
+        return means, stds

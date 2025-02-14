@@ -1,6 +1,7 @@
 import numpy as np
 from torch.utils.data import Dataset
 import torch
+import scipy
 
 
 class AverageMeter(object):
@@ -16,7 +17,8 @@ class AverageMeter(object):
         self.count = 0
 
     def update(self, val, n=1):
-        """_summary_: Updates the average meter with the new value and the number of samples
+        """_summary_: Updates the average meter with the new value and
+        the number of samples
         Args:
             val (_type_): value
             n (int, optional):  Defaults to 1.
@@ -61,7 +63,8 @@ class ExpertDatasetTensor(Dataset):
         self.exp_preds = np.array(exp_preds)
 
     def __getitem__(self, index):
-        """Take the index of item and returns the image, label, expert prediction and index in original dataset"""
+        """Take the index of item and returns the image, label,
+        expert prediction and index in original dataset"""
         label = self.targets[index]
         image = self.images[index]
         expert_pred = self.exp_preds[index]
@@ -69,6 +72,7 @@ class ExpertDatasetTensor(Dataset):
 
     def __len__(self):
         return len(self.targets)
+
 
 def argmax_constrained(array1, array2, tol):
     if len(array2.shape) == 1:
@@ -87,3 +91,30 @@ def argmax_constrained(array1, array2, tol):
             return None
     max_index = np.argmax(array1[indices])
     max_index = indices[max_index]
+
+
+def pareto(X, Y):
+
+    convex_hull = scipy.spatial.ConvexHull(np.array([X, Y]).T)
+    convex_hull_vertices = convex_hull.vertices
+    X = X[convex_hull_vertices]
+    Y = Y[convex_hull_vertices]
+    pareto_X = []
+    pareto_Y = []
+    for i in range(len(X)):
+        is_pareto = True
+        for j in range(len(X)):
+            if X[j] > X[i] and Y[j] < Y[i]:
+                is_pareto = False
+                break
+        if is_pareto:
+            pareto_X.append(X[i])
+            pareto_Y.append(Y[i])
+    # sort the pareto front
+    pareto_X, pareto_Y = zip(*sorted(zip(pareto_X, pareto_Y)))
+    # append (0.6, x[0]) for the first (x[0], y[0]) point
+    new_point = (0.6, pareto_Y[0])
+    new_point_2 = (pareto_X[-1], 0.37)
+    pareto_X = [new_point[0]] + list(pareto_X) + [new_point_2[0]]
+    pareto_Y = [new_point[1]] + list(pareto_Y) + [new_point_2[1]]
+    return pareto_X, pareto_Y

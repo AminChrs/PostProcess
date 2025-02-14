@@ -1,24 +1,23 @@
 import torch
 import os
 import random
-import sys
 from sklearn.preprocessing import StandardScaler
-import torch
 import pandas as pd
 import logging
-import sys
-
-sys.path.append("../")
+import numpy as np
+from .basedataset import dataset
 import zipfile
 import requests
 from .basedataset import BaseDataset
+from pathlib import Path
 
 
 class BrowardDataset(BaseDataset):
     """Compas dataset with human judgements for 1000 points"""
 
     def __init__(
-        self, data_dir, test_split=0.2, val_split=0.1, batch_size=1000, transforms=None
+        self, data_dir, test_split=0.2, val_split=0.1, batch_size=1000,
+        transforms=None
     ):
         """
         https://farid.berkeley.edu/downloads/publications/scienceadvances17/allData.zip
@@ -26,7 +25,8 @@ class BrowardDataset(BaseDataset):
 
         data_dir: where to save files for model
         test_split: percentage of test data
-        val_split: percentage of data to be used for validation (from training set)
+        val_split: percentage of data to be used for validation (from training
+        set)
         batch_size: batch size for training
         transforms: data transforms
         """
@@ -47,7 +47,8 @@ class BrowardDataset(BaseDataset):
         if not os.path.exists(self.data_dir + "/allDataBroward"):
             logging.info("Downloading Broward data")
             r = requests.get(
-                "https://farid.berkeley.edu/downloads/publications/scienceadvances17/allData.zip",
+                "https://farid.berkeley.edu/" +
+                "downloads/publications/scienceadvances17/allData.zip",
                 allow_redirects=True,
             )
             print("self.data_dir: ", self.data_dir)
@@ -57,7 +58,8 @@ class BrowardDataset(BaseDataset):
             if not os.path.exists(self.data_dir + "/allDataBroward"):
                 os.makedirs(self.data_dir + "/allDataBroward")
             # python unzip
-            with zipfile.ZipFile(self.data_dir + "/allData.zip", "r") as zip_ref:
+            with zipfile.ZipFile(self.data_dir +
+                                 "/allData.zip", "r") as zip_ref:
                 zip_ref.extractall(self.data_dir + "/allDataBroward")
             os.remove(self.data_dir + "/allData.zip")
 
@@ -69,7 +71,7 @@ class BrowardDataset(BaseDataset):
                 mturk_data = pd.read_csv(
                     self.data_dir + "/allDataBroward/MTURK_RACE.csv"
                 )
-            except:
+            except FileNotFoundError or FileExistsError:
                 logging.error("Failed to load Broward data")
                 raise
         else:
@@ -81,7 +83,7 @@ class BrowardDataset(BaseDataset):
                 mturk_data = pd.read_csv(
                     self.data_dir + "/allDataBroward/MTURK_RACE.csv"
                 )
-            except:
+            except FileNotFoundError or FileExistsError:
                 logging.error("Failed to load Broward data")
                 raise
 
@@ -104,7 +106,7 @@ class BrowardDataset(BaseDataset):
             # only keep the columns that are not nan
             row = row[row.notna()]
             # get a random prediction
-            random_sample = row.sample(n=1).values[0]
+            # random_sample = row.sample(n=1).values[0]
             most_common = row.value_counts().idxmax()
             # can choose either here
             if most_common == 1:
@@ -176,3 +178,41 @@ class BrowardDataset(BaseDataset):
         self.data_test_loader = torch.utils.data.DataLoader(
             self.data_test, batch_size=self.batch_size, shuffle=True
         )
+
+
+def generate_COMPAS():
+    data_dir = './exp_data/data'
+    dataset_compas = BrowardDataset(data_dir, test_split=0.2, val_split=0.1)
+    Dataset = dataset()
+    all_sets = ['train', 'test', 'validation']
+    data_loader = {}
+    data_loader['train'] = dataset_compas.data_train_loader
+    data_loader['val'] = dataset_compas.data_val_loader
+    data_loader['test'] = dataset_compas.data_test_loader
+
+    def data_from_loader(loader):
+        X = []
+        Y = []
+        S = []
+        M = []
+        for i, (x, y, m, s) in enumerate(loader):
+            X.append(x)
+            Y.append(y)
+            S.append(s)
+            M.append(m)
+        X = torch.cat(X, dim=0)
+        Y = torch.cat(Y, dim=0)
+        S = torch.cat(S, dim=0)
+        M = torch.cat(M, dim=0)
+        X = X.numpy()
+        Y = Y.numpy()
+        S = S.numpy()
+        M = M.numpy()
+        S -= 1
+        return X, Y, S, M
+    for set in all_sets:
+        Dataset.X[set], Dataset.y[set], Dataset.s[set], Dataset.M[set] =\
+            data_from_loader(data_loader[set])
+        Dataset.YM[set] = np.where(Dataset.y[set] == Dataset.M[set], 1, 0)
+    Dataset.finalize()
+    return Dataset
