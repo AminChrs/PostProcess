@@ -23,6 +23,42 @@ For easy installation of the package using ```pip```, you can use the following 
 pip install postprocessing
 ```
 
+## Quickstart Example
+![image info](Diagram.jpg)
+The flow of the codes written via d-GNP is as above figure and contains two main step of training the embedding functions related to each constraint/loss, and then to find the right combination of the embeddings to achieve optimal accuracy with a set tolerance for the constraints.
+
+In the following, we brought a simple example of training and validating d-GNP for ACS dataset:
+
+```python
+    # Generate Dataset
+    Dataset = generate_ACS()
+
+    # Define Tolerance Space
+    tolerance_space = np.linspace(0.01, 0.2, 1000)
+
+    # Define Coefficient Space
+    coeff_space = np.linspace(-.5, .5, 100)  # Eodds + ACS
+    coeff_space = np.meshgrid(coeff_space, coeff_space)
+    coeff_space = list(zip(coeff_space[0].flatten(),
+                           coeff_space[1].flatten()))
+
+    # Training
+    emb_loss = Embedding("loss", "rf")
+    emb_eo = Embedding("eo", "rf")
+    emb_loss.fit(Dataset)
+    emb_eo.fit(Dataset)
+
+    # Validation
+    embs = [emb_loss, emb_eo]
+    classifier_emb = Classifier(embs)
+    coeffs = classifier_emb.optimal_combination(Dataset,
+                                                coeff_space,
+                                                tolerance_space,)
+
+    # Test
+    means, stds = classifier_emb.test(coeffs, Dataset)
+```
+
 ## Datasets
 The following datasets are used for the experiments:
 
@@ -35,13 +71,6 @@ To run the code in the Jupyter Notebook files, make sure you have the dependenci
 ```sh
 pip install -r requirements.txt
 ``` -->
-
-## Usage
-![image info](Diagram.jpg)
-
-1. Clone this repository to your local machine.
-2. Open the Jupyter Notebook files (ACS.ipynb and COMPAS.ipynb) using Jupyter Notebook.
-3. Run the code cells in the notebooks to reproduce the experiments and generate the plots.
 
 ## License
 
