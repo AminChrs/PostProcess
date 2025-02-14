@@ -27,8 +27,8 @@ In the following, we brought a simple example of training and validating d-GNP f
     # Define Tolerance Space
     tolerance_space = np.linspace(0.01, 0.2, 1000)
 
-    # Define Coefficient Space
-    coeff_space = np.linspace(-.5, .5, 100)  # Eodds + ACS
+    # Define Coefficient Space for Linear Combination
+    coeff_space = np.linspace(-.5, .5, 100)
     coeff_space = np.meshgrid(coeff_space, coeff_space)
     coeff_space = list(zip(coeff_space[0].flatten(),
                            coeff_space[1].flatten()))
