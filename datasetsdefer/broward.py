@@ -9,7 +9,6 @@ from .basedataset import dataset
 import zipfile
 import requests
 from .basedataset import BaseDataset
-from pathlib import Path
 
 
 class BrowardDataset(BaseDataset):
@@ -187,7 +186,7 @@ def generate_COMPAS():
     all_sets = ['train', 'test', 'validation']
     data_loader = {}
     data_loader['train'] = dataset_compas.data_train_loader
-    data_loader['val'] = dataset_compas.data_val_loader
+    data_loader['validation'] = dataset_compas.data_val_loader
     data_loader['test'] = dataset_compas.data_test_loader
 
     def data_from_loader(loader):
@@ -213,6 +212,6 @@ def generate_COMPAS():
     for set in all_sets:
         Dataset.X[set], Dataset.y[set], Dataset.s[set], Dataset.M[set] =\
             data_from_loader(data_loader[set])
-        Dataset.YM[set] = np.where(Dataset.y[set] == Dataset.M[set], 1, 0)
+        Dataset.MY[set] = np.where(Dataset.y[set] == Dataset.M[set], 1, 0)
     Dataset.finalize()
     return Dataset

@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from helpers.utils import argmax_constrained
 from helpers.bootstrap import bootstrap_vec
+from networks.linear_net import LinearNet
 
 
 idx_y_emb = [[0, 2], [1, 3]]
@@ -15,13 +16,19 @@ class Embedding:
         self.net_type = net_type
         self.init_estimator()
 
-    def init_estimator(self):
+    def init_estimator(self, dataset=None, device='cpu'):
         if self.net_type == "rf" and self.type_emb != "loss":
             self.net = RandomForestClassifier(n_jobs=-2)
         elif self.net_type == "rf" and self.type_emb == "loss":
             self.nets = []
             self.nets.append(RandomForestClassifier(n_jobs=-2))
             self.nets.append(RandomForestClassifier(n_jobs=-2))
+        elif self.net_type == "nn" and self.type_emb != "loss":
+            self.net = LinearNet(dataset.d, 4).to(device)
+        elif self.net_type == "nn" and self.type_emb == "loss":
+            self.nets = []
+            self.nets.append(LinearNet(dataset.d, 2).to(device))
+            self.nets.append(LinearNet(dataset.d, 2).to(device))
 
     def fit(self, **kwargs):
         if self.type_emb == "dp":
