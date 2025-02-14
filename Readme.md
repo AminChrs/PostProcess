@@ -18,7 +18,7 @@ pip install postprocessing
 ![image info](Diagram.jpg)
 The flow of the codes written via d-GNP is as above figure and contains two main step of training the embedding functions related to each constraint/loss, and then to find the right combination of the embeddings to achieve optimal accuracy with a set tolerance for the constraints.
 
-In the following, we brought a simple example of training and validating d-GNP for ACS dataset:
+In the following, we brought a simple example of training and validating d-GNP for [ACS](https://github.com/socialfoundations/folktables) dataset:
 
 ```python
 import numpy as np
