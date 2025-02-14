@@ -11,7 +11,7 @@ This repository contains the experiments of the paper "[A Unifying Post-Processi
 
 For easy installation of the package using ```pip```, you can use the following command in your terminal:
 ```bash
-  pip install postprocessing
+pip install postprocessing
 ```
 
 ## Quickstart Example
@@ -21,38 +21,38 @@ The flow of the codes written via d-GNP is as above figure and contains two main
 In the following, we brought a simple example of training and validating d-GNP for ACS dataset:
 
 ```python
-    import numpy as np
-    import postprocessing as dgnp
-    from dgnp.helpers.embedding import Embedding, Classifier
-    from dgnp.datasetsdefer.acs_dataset import generate_ACS
+import numpy as np
+import postprocessing as dgnp
+from dgnp.helpers.embedding import Embedding, Classifier
+from dgnp.datasetsdefer.acs_dataset import generate_ACS
 
-    # Generate Dataset
-    Dataset = generate_ACS()
+# Generate Dataset
+Dataset = generate_ACS()
 
-    # Define Tolerance Space
-    tolerance_space = np.linspace(0.01, 0.2, 1000)
+# Define Tolerance Space
+tolerance_space = np.linspace(0.01, 0.2, 1000)
 
-    # Define Coefficient Space for Linear Combination
-    coeff_space = np.linspace(-.5, .5, 100)
-    coeff_space = np.meshgrid(coeff_space, coeff_space)
-    coeff_space = list(zip(coeff_space[0].flatten(),
-                            coeff_space[1].flatten()))
+# Define Coefficient Space for Linear Combination
+coeff_space = np.linspace(-.5, .5, 100)
+coeff_space = np.meshgrid(coeff_space, coeff_space)
+coeff_space = list(zip(coeff_space[0].flatten(),
+                        coeff_space[1].flatten()))
 
-    # Training
-    emb_loss = Embedding("loss", "rf")
-    emb_eo = Embedding("eo", "rf")
-    emb_loss.fit(Dataset)
-    emb_eo.fit(Dataset)
+# Training
+emb_loss = Embedding("loss", "rf")
+emb_eo = Embedding("eo", "rf")
+emb_loss.fit(Dataset)
+emb_eo.fit(Dataset)
 
-    # Validation
-    embs = [emb_loss, emb_eo]
-    classifier_emb = Classifier(embs)
-    coeffs = classifier_emb.optimal_combination(Dataset,
-                                                coeff_space,
-                                                tolerance_space,)
+# Validation
+embs = [emb_loss, emb_eo]
+classifier_emb = Classifier(embs)
+coeffs = classifier_emb.optimal_combination(Dataset,
+                                            coeff_space,
+                                            tolerance_space,)
 
-    # Test
-    means, stds = classifier_emb.test(coeffs, Dataset)
+# Test
+means, stds = classifier_emb.test(coeffs, Dataset)
 ```
 
 ## Datasets
