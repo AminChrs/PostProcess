@@ -21,6 +21,11 @@ The flow of the codes written via d-GNP is as above figure and contains two main
 In the following, we brought a simple example of training and validating d-GNP for ACS dataset:
 
 ```python
+    import numpy as np
+    import postprocessing as dgnp
+    from dgnp.helpers.embedding import Embedding, Classifier
+    from dgnp.datasetsdefer.acs_dataset import generate_ACS
+
     # Generate Dataset
     Dataset = generate_ACS()
 
@@ -31,7 +36,7 @@ In the following, we brought a simple example of training and validating d-GNP f
     coeff_space = np.linspace(-.5, .5, 100)
     coeff_space = np.meshgrid(coeff_space, coeff_space)
     coeff_space = list(zip(coeff_space[0].flatten(),
-                           coeff_space[1].flatten()))
+                            coeff_space[1].flatten()))
 
     # Training
     emb_loss = Embedding("loss", "rf")
