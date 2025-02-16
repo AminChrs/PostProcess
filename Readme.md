@@ -39,8 +39,8 @@ coeff_space = list(zip(coeff_space[0].flatten(),
                         coeff_space[1].flatten()))
 
 # Training
-emb_loss = Embedding("loss", "rf")
-emb_eo = Embedding("eo", "rf")
+emb_loss = Embedding("loss", "def", "rf")
+emb_eo = Embedding("eo", "def", "rf")
 emb_loss.fit(Dataset)
 emb_eo.fit(Dataset)
 
