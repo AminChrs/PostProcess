@@ -74,7 +74,7 @@ The available identifiers are listed below.
 | Multiclass classification loss | ```"loss_multi"```| (optional) Cost-sensitive matrix ```C=```$C$
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
-| Long-tail classification | ```"long_tail"```| ```alpha=```[$\alpha_1, \ldots, \alpha_K$] |
+| Long-tail classification | ```"long_tail"```| ```alpha=```[ $\alpha_1, \ldots, \alpha_K$ ] |
 | Type-K error | ```"type_K_err"```| ```system="def"```/```system="multi"```, ```K=```$$K$$ |
 | Demographic parity | ```"dp"```| ```system="def"```/```system="multi"```, (optional) Effective label ```L=```$L$  | 
 | Equality of opportunity | ```"eop"```| ```system="def"```/```system="multi"```, (optional) Effective label ```L=```$L$   |
