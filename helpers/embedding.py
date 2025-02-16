@@ -41,7 +41,7 @@ class Embedding:
     def fit(self, **kwargs):
         if self.type_emb == "dp":
             return self.fit_eo(**kwargs)
-        elif self.type_emb == "eo":
+        elif self.type_emb == "eodds":
             return self.fit_eo(**kwargs)
         elif self.type_emb == "loss":
             return self.fit_loss(**kwargs)
@@ -163,7 +163,7 @@ class Embedding:
     def calculate_embedding_from_scores(self, **kwargs):
         if self.type_emb == "dp":
             return self.calculate_embedding_dp(**kwargs)
-        elif self.type_emb == "eo":
+        elif self.type_emb == "eodds":
             return self.calculate_embedding_eo(**kwargs)
         elif self.type_emb == "loss":
             return self.calculate_embedding_loss(**kwargs)
