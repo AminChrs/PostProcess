@@ -1,5 +1,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![GitHub version](https://img.shields.io/github/v/release/AminChrs/PostProcess)
+![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/AminChrs/PostProcess/latest/total)
+
 
 <p align="center">
 <img src="logo.png" width="400" />
