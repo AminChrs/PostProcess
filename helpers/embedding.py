@@ -17,7 +17,7 @@ class Embedding:
         self.type_emb = type_emb
         self.net_type = net_type
         self.kwargs = kwargs
-        self.init_estimator()
+        self.init_estimator(kwargs['Dataset'])
 
     def init_estimator(self, dataset=None, device='cpu'):
         self.device = device
