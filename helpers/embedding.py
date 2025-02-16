@@ -48,14 +48,25 @@ class Embedding:
 
     def calculate(self, Dataset, data_type, calulation_type):
         if calulation_type == "estimate":
-            if self.type_emb != "loss":
+            if self.type_emb != "loss" and self.net_type == "rf":
                 net_out = self.net.predict_proba(Dataset.X[data_type])
-            elif self.type_emb == "loss":
+            elif self.type_emb == "loss" and self.net_type == "rf":
                 net_out = []
                 net_out.append(
                     self.nets[0].predict_proba(Dataset.X[data_type]))
                 net_out.append(
                     self.nets[1].predict_proba(Dataset.X[data_type]))
+            elif self.type_emb != "loss" and self.net_type == "nn":
+                net_out = self.net(torch.tensor(Dataset.X[data_type]).to(
+                    self.device)).detach().numpy()
+            elif self.type_emb == "loss" and self.net_type == "nn":
+                net_out = []
+                net_out.append(
+                    self.nets[0](torch.tensor(Dataset.X[data_type]).to(
+                        self.device)).detach().numpy())
+                net_out.append(
+                    self.nets[1](torch.tensor(Dataset.X[data_type]).to(
+                        self.device)).detach().numpy())
         elif calulation_type == "true":
             if self.type_emb == 'loss':
                 net_out = []
@@ -91,6 +102,7 @@ class Embedding:
                     torch.tensor(Dataset.X[set]),
                     torch.tensor(Dataset.L[set]),
                     torch.tensor(Dataset.M[set]),
+                    torch.tensor(Dataset.s[set]),
                 )
                 data_loader[set] = torch.utils.data.DataLoader(
                     datasets[set], batch_size=32, shuffle=True
@@ -125,7 +137,8 @@ class Embedding:
                 datasets[set] = torch.utils.data.TensorDataset(
                     torch.tensor(Dataset.X[set]),
                     torch.tensor(Dataset.y[set]),
-                    torch.tensor(Dataset.MY[set]),
+                    torch.tensor(Dataset.M[set]),
+                    torch.tensor(Dataset.s[set]),
                 )
                 data_loader[set] = torch.utils.data.DataLoader(
                     datasets[set], batch_size=32, shuffle=True
