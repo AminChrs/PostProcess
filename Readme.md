@@ -72,7 +72,7 @@ The available identifiers are listed below.
 
 | Embedding | identifier | kwargs |
 |-----------|------|-----|
-| Deferral loss| ```"loss"``` | N/A |
+| Deferral 0-1 loss| ```"loss"``` | N/A |
 | Multiclass classification loss | ```"loss_multi"```| (optional) Cost-sensitive matrix ```C=```$C$
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
