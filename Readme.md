@@ -73,7 +73,7 @@ The available identifiers are listed below.
 | Embedding | identifier | args |
 |-----------|------|-----|
 | Deferral loss| ```"loss"``` | N/A |
-| Multiclass classification loss | ```"loss_multi"```| N/A
+| Multiclass classification loss | ```"loss_multi"```| (Optional) Cost-sensitive matrix $C$
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
 | Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
