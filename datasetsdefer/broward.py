@@ -9,6 +9,7 @@ from .basedataset import dataset
 import zipfile
 import requests
 from .basedataset import BaseDataset
+from .basedataset import data_from_loader
 
 
 class BrowardDataset(BaseDataset):
@@ -189,26 +190,6 @@ def generate_COMPAS():
     data_loader['validation'] = dataset_compas.data_val_loader
     data_loader['test'] = dataset_compas.data_test_loader
 
-    def data_from_loader(loader):
-        X = []
-        Y = []
-        S = []
-        M = []
-        for i, (x, y, m, s) in enumerate(loader):
-            X.append(x)
-            Y.append(y)
-            S.append(s)
-            M.append(m)
-        X = torch.cat(X, dim=0)
-        Y = torch.cat(Y, dim=0)
-        S = torch.cat(S, dim=0)
-        M = torch.cat(M, dim=0)
-        X = X.numpy()
-        Y = Y.numpy()
-        S = S.numpy()
-        M = M.numpy()
-        S -= 1
-        return X, Y, S, M
     for set in all_sets:
         Dataset.X[set], Dataset.y[set], Dataset.s[set], Dataset.M[set] =\
             data_from_loader(data_loader[set])

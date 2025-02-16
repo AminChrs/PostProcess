@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from types import SimpleNamespace
 import numpy as np
+import torch
 
 
 class BaseDataset(ABC):
@@ -59,3 +60,25 @@ class dataset:
                                   pa1y0=pa1y0,
                                   pa0y1=pa0y1,
                                   pa0y0=pa0y0)
+
+
+def data_from_loader(loader):
+    X = []
+    Y = []
+    S = []
+    M = []
+    for i, (x, y, m, s) in enumerate(loader):
+        X.append(x)
+        Y.append(y)
+        S.append(s)
+        M.append(m)
+    X = torch.cat(X, dim=0)
+    Y = torch.cat(Y, dim=0)
+    S = torch.cat(S, dim=0)
+    M = torch.cat(M, dim=0)
+    X = X.numpy()
+    Y = Y.numpy()
+    S = S.numpy()
+    M = M.numpy()
+    S -= 1
+    return X, Y, S, M
