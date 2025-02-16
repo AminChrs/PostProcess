@@ -1,7 +1,7 @@
 import numpy as np
 
-vocabfile = "../data/model_vocab.txt"
-modelfile = "../data/model_count_table.txt"
+vocabfile = "./exp_data/data/model_vocab.txt"
+modelfile = "./exp_data/data/model_count_table.txt"
 
 K = 0
 wordprobs = None

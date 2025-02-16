@@ -394,7 +394,7 @@ class HateSpeech(BaseDataset):
 
 
 def generate_hatespeech(device="cpu"):
-    data_dir = "./data"
+    data_dir = "./exp_data/data"
     dataset = HateSpeech(data_dir, True, False, 'random_annotator', device)
     all_sets = ["train", "test", "validation"]
     dataloader = {}
