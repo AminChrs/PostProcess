@@ -10,6 +10,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 from .basedataset import BaseDataset
 from .basedataset import data_from_loader
+from .basedataset import dataset
 
 
 class ModelPredictAAE:
@@ -395,17 +396,17 @@ class HateSpeech(BaseDataset):
 
 def generate_hatespeech(device="cpu"):
     data_dir = "./exp_data/data"
-    dataset = HateSpeech(data_dir, True, False, 'random_annotator', device)
+    dataset_hs = HateSpeech(data_dir, True, False, 'random_annotator', device)
     all_sets = ["train", "test", "validation"]
     dataloader = {}
-    dataloader["train"] = dataset.data_train_loader
-    dataloader["validation"] = dataset.data_val_loader
-    dataloader["test"] = dataset.data_test_loader
+    dataloader["train"] = dataset_hs.data_train_loader
+    dataloader["validation"] = dataset_hs.data_val_loader
+    dataloader["test"] = dataset_hs.data_test_loader
     Dataset = dataset()
     for set in all_sets:
         Dataset.X[set], Dataset.y[set], Dataset.s[set], Dataset.M[set] =\
             data_from_loader(dataloader[set])
         Dataset.MY[set] = np.where(Dataset.y[set] == Dataset.M[set], 1, 0)
-    Dataset.d = dataset.d
+    Dataset.d = dataset_hs.d
     Dataset.finalize()
     return Dataset
