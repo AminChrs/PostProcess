@@ -77,10 +77,10 @@ The available identifiers are listed below.
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
 | Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
-| Type-K error | ```"type_K_err"```| $$K$$ |
-| Demographic parity | ```"dp"```| (Optional) Effective label $L$  | 
-| Equality of opportunity | ```"Eop"```| (Optional) Effective label $L$  |
-| Equalized odds | ```"Eodds"``` | (Optional) Effective label $L$  |
+| Type-K error | ```"type_K_err"```| ```"def"```/```"multi"```, $$K$$ |
+| Demographic parity | ```"dp"```| ```"def"```/```"multi"```, (Optional) Effective label $L$  | 
+| Equality of opportunity | ```"Eop"```| ```"def"```/```"multi"```, (Optional) Effective label $L$  |
+| Equalized odds | ```"Eodds"``` | ```"def"```/```"multi"```, (Optional) Effective label $L$  |
 
 <!-- ## Requirements
 
