@@ -94,7 +94,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Citation
 
-In case that you have used codes in this repository, please consider citing our paper:
+In case that you used codes in this repository, please consider citing our paper:
 
 ```bibtex
 @inproceedings{charusaieunifying,
