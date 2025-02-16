@@ -39,8 +39,8 @@ coeff_space = list(zip(coeff_space[0].flatten(),
                         coeff_space[1].flatten()))
 
 # Training
-emb_loss = Embedding("loss", "def", "rf")
-emb_eo = Embedding("eo", "def", "rf")
+emb_loss = Embedding("loss", "rf", system="def")
+emb_eo = Embedding("eo", "rf", system="def")
 emb_loss.fit(Dataset)
 emb_eo.fit(Dataset)
 
@@ -64,8 +64,7 @@ The following datasets can be generated and used in this package:
 | The [COMPAS](https://www.science.org/doi/10.1126/sciadv.aao5580) dataset for prediction of recidivism | ```generate_COMPAS()``` |
 ## Embeddings
 
-This package includes predefined embeddings for objectives and constraints. You can create an embedding using ```Embedding(identifier, args, "rf")``` for Random Forest-based estimation or
-```Embedding(identifier, args, "nn")``` for Neural Network-based estimation.
+This package includes predefined embeddings for objectives and constraints. You can create an embedding using ```Embedding(identifier, "rf", , **kwargs)``` for Random Forest-based estimation or ```Embedding(identifier, "nn", **kwargs)``` for Neural Network-based estimation.
 
 The available identifiers are listed below.
 
