@@ -144,5 +144,6 @@ def generate_ACS():
             human_sim(Dataset.y[data_type], Dataset.s[data_type])
         Dataset.MY[data_type] =\
             np.where(Dataset.y[data_type] == Dataset.M[data_type], 1, 0)
+    Dataset.d = Dataset.X['train'].shape[1]
     Dataset.finalize()
     return Dataset

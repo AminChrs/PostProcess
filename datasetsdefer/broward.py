@@ -213,5 +213,6 @@ def generate_COMPAS():
         Dataset.X[set], Dataset.y[set], Dataset.s[set], Dataset.M[set] =\
             data_from_loader(data_loader[set])
         Dataset.MY[set] = np.where(Dataset.y[set] == Dataset.M[set], 1, 0)
+    Dataset.d = dataset_compas.d
     Dataset.finalize()
     return Dataset
