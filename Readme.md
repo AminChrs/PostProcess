@@ -1,6 +1,6 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![GitHub version](https://img.shields.io/github/v/release/AminChrs/PostProcess)
-![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/AminChrs/PostProcess/latest/total)
+[![Downloads](https://static.pepy.tech/badge/postprocessing)](https://pepy.tech/projects/postprocessing)
 
 
 <p align="center">
