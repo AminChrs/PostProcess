@@ -79,8 +79,8 @@ The available identifiers are listed below.
 | Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
 | Type-K error | ```"type_K_err"```| ```"def"```/```"multi"```, $$K$$ |
 | Demographic parity | ```"dp"```| ```"def"```/```"multi"```, (optional) Effective label $L$  | 
-| Equality of opportunity | ```"Eop"```| ```"def"```/```"multi"```, (optional) Effective label $L$  |
-| Equalized odds | ```"Eodds"``` | ```"def"```/```"multi"```, (optional) Effective label $L$  |
+| Equality of opportunity | ```"eop"```| ```"def"```/```"multi"```, (optional) Effective label $L$  |
+| Equalized odds | ```"eodds"``` | ```"def"```/```"multi"```, (optional) Effective label $L$  |
 
 <!-- ## Requirements
 
