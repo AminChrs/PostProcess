@@ -56,10 +56,32 @@ means, stds = classifier_emb.test(coeffs, Dataset)
 ```
 
 ## Datasets
-The following datasets are used for the experiments:
+The following datasets can be generated and used in this package:
 
-- The ACSIncome dataset from [Folktables](https://github.com/socialfoundations/folktables) package for income prediction
-- The [COMPAS](https://www.science.org/doi/10.1126/sciadv.aao5580) dataset for prediction of recidivism
+| Dataset | Generation Code |
+|---------|-----------------| 
+| The ACSIncome dataset from [Folktables](https://github.com/socialfoundations/folktables) package for income prediction |  ```generate_ACS()```
+| The [COMPAS](https://www.science.org/doi/10.1126/sciadv.aao5580) dataset for prediction of recidivism | ```generate_COMPAS()``` |
+## Embeddings
+
+This package includes predefined embeddings for objectives and constraints. You can create an embedding using:
+```Embedding(identifier, args, "rf")``` for Random Forest-based estimation or
+```Embedding(identifier, args, "nn")``` for Neural Network-based estimation.
+
+The available identifiers are listed below.
+
+| Embedding | identifier | args |
+|-----------|------|-----|
+| Deferral loss| ```"loss"``` | N/A |
+| Multiclass classification loss | ```"loss_multi"```| N/A
+| Expert intervention budget | ```"interv_budget"```| N/A |
+| OOD | ```"ood"```| N/A |
+| Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
+| Type-K error | ```"type_K_err"```| $$K$$ |
+| Demographic parity | ```"dp"```| (Optional) Effective label $L$  | 
+| Equality of opportunity | ```"Eop"```| (Optional) Effective label $L$  |
+| Equalized odds | ```"Eodds"``` | (Optional) Effective label $L$  |
+
 <!-- ## Requirements
 
 To run the code in the Jupyter Notebook files, make sure you have the dependencies installed. To do this, you can run the following command in your terminal:
