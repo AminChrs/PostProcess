@@ -64,8 +64,7 @@ The following datasets can be generated and used in this package:
 | The [COMPAS](https://www.science.org/doi/10.1126/sciadv.aao5580) dataset for prediction of recidivism | ```generate_COMPAS()``` |
 ## Embeddings
 
-This package includes predefined embeddings for objectives and constraints. You can create an embedding using:
-```Embedding(identifier, args, "rf")``` for Random Forest-based estimation or
+This package includes predefined embeddings for objectives and constraints. You can create an embedding using ```Embedding(identifier, args, "rf")``` for Random Forest-based estimation or
 ```Embedding(identifier, args, "nn")``` for Neural Network-based estimation.
 
 The available identifiers are listed below.
