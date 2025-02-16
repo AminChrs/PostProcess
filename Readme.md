@@ -14,7 +14,7 @@ For easy installation of the package using ```pip```, you can use the following 
 pip install postprocessing
 ```
 
-## Quickstart Example
+## Quickstart
 ![image info](Diagram.jpg)
 The flow of the codes written via d-GNP is as above figure and contains two main step of training the embedding functions related to each constraint/loss, and then to find the right combination of the embeddings to achieve optimal accuracy with a set tolerance for the constraints.
 
