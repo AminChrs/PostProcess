@@ -3,7 +3,9 @@ from sklearn.ensemble import RandomForestClassifier
 from helpers.utils import argmax_constrained
 from helpers.bootstrap import bootstrap_vec
 from networks.linear_net import LinearNet
-
+from baselines.compare_confidence import CompareConfidence
+from torch import optim
+import torch
 
 idx_y_emb = [[0, 2], [1, 3]]
 idx_M_emb = [[0, 1], [2, 3]]
@@ -18,6 +20,7 @@ class Embedding:
         self.init_estimator()
 
     def init_estimator(self, dataset=None, device='cpu'):
+        self.device = device
         if self.net_type == "rf" and self.type_emb != "loss" \
                 and self.kwargs['system'] == "def":
             self.net = RandomForestClassifier(n_jobs=-2)
@@ -37,7 +40,7 @@ class Embedding:
 
     def fit(self, **kwargs):
         if self.type_emb == "dp":
-            return self.fit_dp(**kwargs)
+            return self.fit_eo(**kwargs)
         elif self.type_emb == "eo":
             return self.fit_eo(**kwargs)
         elif self.type_emb == "loss":
@@ -76,15 +79,73 @@ class Embedding:
             ret = self.calculate_embedding_from_scores(nets_out=net_out)
         return ret
 
-    def fit_dp(self, Dataset):
-        self.net.fit(Dataset.X['train'], Dataset.L['train'])
-
     def fit_eo(self, Dataset):
-        self.net.fit(Dataset.X['train'], Dataset.L['train'])
+        if self.net_type == "rf":
+            self.net.fit(Dataset.X['train'], Dataset.L['train'])
+        elif self.net_type == "nn":
+            all_sets = ['train', 'test', 'validation']
+            data_loader = {}
+            datasets = {}
+            for set in all_sets:
+                datasets[set] = torch.utils.data.TensorDataset(
+                    torch.tensor(Dataset.X[set]),
+                    torch.tensor(Dataset.L[set]),
+                    torch.tensor(Dataset.M[set]),
+                )
+                data_loader[set] = torch.utils.data.DataLoader(
+                    datasets[set], batch_size=32, shuffle=True
+                )
+            
+            optimizer = optim.AdamW
+            scheduler = None
+            lr = 0.01
+            model_dummy = LinearNet(Dataset.d, 2).to(self.device)
+            compareconfidence = CompareConfidence(self.net, model_dummy,
+                                                  self.device)
+            compareconfidence.fit(
+                data_loader['train'],
+                data_loader['validation'],
+                data_loader['test'],
+                epochs=500,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                lr=lr,
+                verbose=False,
+                test_interval=5)
 
     def fit_loss(self, Dataset):
-        self.nets[0].fit(Dataset.X['train'], Dataset.y['train'])
-        self.nets[1].fit(Dataset.X['train'], Dataset.MY['train'])
+        if self.net_type == "rf":
+            self.nets[0].fit(Dataset.X['train'], Dataset.y['train'])
+            self.nets[1].fit(Dataset.X['train'], Dataset.MY['train'])
+        elif self.net_type == "nn":
+            all_sets = ['train', 'test', 'validation']
+            data_loader = {}
+            datasets = {}
+            for set in all_sets:
+                datasets[set] = torch.utils.data.TensorDataset(
+                    torch.tensor(Dataset.X[set]),
+                    torch.tensor(Dataset.y[set]),
+                    torch.tensor(Dataset.MY[set]),
+                )
+                data_loader[set] = torch.utils.data.DataLoader(
+                    datasets[set], batch_size=32, shuffle=True
+                )
+
+            optimizer = optim.AdamW
+            scheduler = None
+            lr = 0.01
+            compareconfidence = CompareConfidence(self.nets[0], self.nets[1],
+                                                  self.device)
+            compareconfidence.fit(
+                data_loader['train'],
+                data_loader['validation'],
+                data_loader['test'],
+                epochs=500,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                lr=lr,
+                verbose=False,
+                test_interval=5)
 
     def calculate_embedding_from_scores(self, **kwargs):
         if self.type_emb == "dp":
