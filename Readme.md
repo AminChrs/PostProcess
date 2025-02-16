@@ -64,6 +64,7 @@ The following datasets can be generated and used in this package:
 |---------|-----------------| 
 | The ACSIncome dataset from [Folktables](https://github.com/socialfoundations/folktables) package for income prediction |  ```generate_ACS()```
 | The [COMPAS](https://www.science.org/doi/10.1126/sciadv.aao5580) dataset for prediction of recidivism | ```generate_COMPAS()``` |
+|The [Hatespeech](https://github.com/t-davidson/hate-speech-and-offensive-language) dataset for prediction of offensive and hatespeech from tweets | ```generate_hatespeech()```
 ## Embeddings
 
 This package includes predefined embeddings for objectives and constraints. You can create an embedding using ```Embedding(identifier, "rf", , **kwargs)``` for Random Forest-based estimation or ```Embedding(identifier, "nn", **kwargs)``` for Neural Network-based estimation.
