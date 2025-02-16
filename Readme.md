@@ -73,14 +73,14 @@ The available identifiers are listed below.
 | Embedding | identifier | args |
 |-----------|------|-----|
 | Deferral loss| ```"loss"``` | N/A |
-| Multiclass classification loss | ```"loss_multi"```| (Optional) Cost-sensitive matrix $C$
+| Multiclass classification loss | ```"loss_multi"```| (optional) Cost-sensitive matrix $C$
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
 | Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
 | Type-K error | ```"type_K_err"```| ```"def"```/```"multi"```, $$K$$ |
-| Demographic parity | ```"dp"```| ```"def"```/```"multi"```, (Optional) Effective label $L$  | 
-| Equality of opportunity | ```"Eop"```| ```"def"```/```"multi"```, (Optional) Effective label $L$  |
-| Equalized odds | ```"Eodds"``` | ```"def"```/```"multi"```, (Optional) Effective label $L$  |
+| Demographic parity | ```"dp"```| ```"def"```/```"multi"```, (optional) Effective label $L$  | 
+| Equality of opportunity | ```"Eop"```| ```"def"```/```"multi"```, (optional) Effective label $L$  |
+| Equalized odds | ```"Eodds"``` | ```"def"```/```"multi"```, (optional) Effective label $L$  |
 
 <!-- ## Requirements
 
