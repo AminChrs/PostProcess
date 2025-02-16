@@ -7,7 +7,7 @@
 <img src="logo.png" width="400" />
 </p>
 
-This repository contains the experiments of the paper "[A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems](https://arxiv.org/abs/2407.12710)" that was [published](https://neurips.cc/virtual/2024/poster/95484) in NeurIPS 2024. This paper introduces a post-processing method for solving a variety of multi-objective learning problems, including but not limited to learn-to-defer problem and fair multi-class classification problem. During this method, first an embedding function related to each objective is trained, and then an optimal classifier via linear combination of the embedding functions is obtained using validation data. This method presents an alternative paradigm compared to Lagrangian-based methods such as primal-dual methods.
+This repository contains the experiments of the paper "[A Unifying Post-Processing Framework for Multi-Objective Learn-to-Defer Problems](https://proceedings.neurips.cc/paper_files/paper/2024/hash/2a5a41a536d3ada8fbf61a9d6fbf18d2-Abstract-Conference.html)" that was [published](https://neurips.cc/virtual/2024/poster/95484) in NeurIPS 2024. This paper introduces a post-processing method for solving a variety of multi-objective learning problems, including but not limited to learn-to-defer problem and fair multi-class classification problem. During this method, first an embedding function related to each objective is trained, and then an optimal classifier via linear combination of the embedding functions is obtained using validation data. This method presents an alternative paradigm compared to Lagrangian-based methods such as primal-dual methods.
 
 ## Installation
 
