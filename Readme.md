@@ -69,17 +69,17 @@ This package includes predefined embeddings for objectives and constraints. You 
 
 The available identifiers are listed below.
 
-| Embedding | identifier | args |
+| Embedding | identifier | kwargs |
 |-----------|------|-----|
 | Deferral loss| ```"loss"``` | N/A |
-| Multiclass classification loss | ```"loss_multi"```| (optional) Cost-sensitive matrix $C$
+| Multiclass classification loss | ```"loss_multi"```| (optional) Cost-sensitive matrix ```C=```$C$
 | Expert intervention budget | ```"interv_budget"```| N/A |
 | OOD | ```"ood"```| N/A |
-| Long-tail classification | ```"long_tail"```| $$\alpha_1, \ldots, \alpha_K$$ |
-| Type-K error | ```"type_K_err"```| ```"def"```/```"multi"```, $$K$$ |
-| Demographic parity | ```"dp"```| ```"def"```/```"multi"```, (optional) Effective label $L$  | 
-| Equality of opportunity | ```"eop"```| ```"def"```/```"multi"```, (optional) Effective label $L$  |
-| Equalized odds | ```"eodds"``` | ```"def"```/```"multi"```, (optional) Effective label $L$  |
+| Long-tail classification | ```"long_tail"```| ```alpha=```[$\alpha_1, \ldots, \alpha_K$] |
+| Type-K error | ```"type_K_err"```| ```system="def"```/```system="multi"```, ```K=```$$K$$ |
+| Demographic parity | ```"dp"```| ```system="def"```/```system="multi"```, (optional) Effective label ```L=```$L$  | 
+| Equality of opportunity | ```"eop"```| ```system="def"```/```system="multi"```, (optional) Effective label ```L=```$L$   |
+| Equalized odds | ```"eodds"``` | ```system="def"```/```system="multi"```, (optional) Effective label ```L=```$L$   |
 
 <!-- ## Requirements
 

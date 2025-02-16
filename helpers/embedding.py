@@ -11,21 +11,26 @@ idx_M_emb = [[0, 1], [2, 3]]
 
 class Embedding:
 
-    def __init__(self, type_emb, net_type):
+    def __init__(self, type_emb, net_type, **kwargs):
         self.type_emb = type_emb
         self.net_type = net_type
+        self.kwargs = kwargs
         self.init_estimator()
 
     def init_estimator(self, dataset=None, device='cpu'):
-        if self.net_type == "rf" and self.type_emb != "loss":
+        if self.net_type == "rf" and self.type_emb != "loss" \
+                and self.kwargs['system'] == "def":
             self.net = RandomForestClassifier(n_jobs=-2)
-        elif self.net_type == "rf" and self.type_emb == "loss":
+        elif self.net_type == "rf" and self.type_emb == "loss" \
+                and self.kwargs['system'] == "def":
             self.nets = []
             self.nets.append(RandomForestClassifier(n_jobs=-2))
             self.nets.append(RandomForestClassifier(n_jobs=-2))
-        elif self.net_type == "nn" and self.type_emb != "loss":
+        elif self.net_type == "nn" and self.type_emb != "loss" \
+                and self.kwargs['system'] == "def":
             self.net = LinearNet(dataset.d, 4).to(device)
-        elif self.net_type == "nn" and self.type_emb == "loss":
+        elif self.net_type == "nn" and self.type_emb == "loss" \
+                and self.kwargs['system'] == "def":
             self.nets = []
             self.nets.append(LinearNet(dataset.d, 2).to(device))
             self.nets.append(LinearNet(dataset.d, 2).to(device))
