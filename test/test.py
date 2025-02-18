@@ -141,10 +141,16 @@ import numpy as np
 
 class test_hatespeech(unittest.TestCase):
 
-    def test_generate(self):
-        Dataset = generate_hatespeech()
-        self.assertIsNotNone(Dataset)
+    # def test_generate(self):
+    #     Dataset = generate_hatespeech()
+    #     self.assertIsNotNone(Dataset)
 
+    def test_embedding(self):
+        Dataset = generate_hatespeech()
+        loss = Embedding("loss", "nn", system="def", Dataset=Dataset)
+        eo = Embedding("eo", "nn", system="def", Dataset=Dataset)
+        assert loss is not None
+        assert eo is not None
 
 def main():
     unittest.main(buffer=False)

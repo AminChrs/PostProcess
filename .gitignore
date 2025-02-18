@@ -1,2 +1,7 @@
 postprocessing.egg*
 exp_data*
+*.sb
+*.sh
+*.txt
+logs*
+*.pyc
